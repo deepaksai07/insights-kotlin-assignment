@@ -2,55 +2,115 @@ package com.example.insights.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.insights.ui.theme.*
 
 @Composable
 fun BodySignalsCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = "Body Signals & Symptom Trends",
-                style = MaterialTheme.typography.titleLarge
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                // Donut Chart
-                DonutChart(
-                    modifier = Modifier.size(120.dp),
-                    proportions = listOf(0.4f, 0.35f, 0.25f),
-                    colors = listOf(Lavender, Pink, Teal)
+    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 24.dp)) {
+        Text(
+            text = "Body Signals",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = "Symptom Trends",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Compared to last cycle",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 32.dp)
                 )
 
-                // Legend
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    LegendItem("Abdominal Pain", Pink)
-                    LegendItem("Mood Swing", Teal)
-                    LegendItem("Bloating", Lavender)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val strokeWidth = 32.dp.toPx()
+                    
+                    // Donut Chart
+                    Canvas(modifier = Modifier.size(200.dp)) {
+                        // Background gap
+                        drawArc(
+                            color = Color(0xFFF3F4F6),
+                            startAngle = 0f,
+                            sweepAngle = 360f,
+                            useCenter = false,
+                            style = Stroke(width = strokeWidth)
+                        )
+                        
+                        // Bloating 31%
+                        drawArc(
+                            color = Lavender,
+                            startAngle = -90f,
+                            sweepAngle = 360f * 0.31f,
+                            useCenter = false,
+                            style = Stroke(width = strokeWidth)
+                        )
+                        
+                        // Fatigue 21%
+                        drawArc(
+                            color = DarkPink,
+                            startAngle = -90f + (360f * 0.31f),
+                            sweepAngle = 360f * 0.21f,
+                            useCenter = false,
+                            style = Stroke(width = strokeWidth)
+                        )
+                        
+                        // Acne 17%
+                        drawArc(
+                            color = Teal,
+                            startAngle = -90f + (360f * 0.52f),
+                            sweepAngle = 360f * 0.17f,
+                            useCenter = false,
+                            style = Stroke(width = strokeWidth)
+                        )
+                        
+                        // Mood 30%
+                        drawArc(
+                            color = Peach,
+                            startAngle = -90f + (360f * 0.69f),
+                            sweepAngle = 360f * 0.30f,
+                            useCenter = false,
+                            style = Stroke(width = strokeWidth)
+                        )
+                    }
+
+                    // Labels
+                    DonutLabel("31%", "Bloating", Modifier.align(Alignment.TopEnd).offset(x = (-10).dp, y = 30.dp))
+                    DonutLabel("30%", "Mood", Modifier.align(Alignment.TopStart).offset(x = 10.dp, y = 30.dp))
+                    DonutLabel("21%", "Fatigue", Modifier.align(Alignment.BottomEnd).offset(x = (-40).dp, y = (-10).dp))
+                    DonutLabel("17%", "Acne", Modifier.align(Alignment.BottomStart).offset(x = 10.dp, y = (-30).dp))
                 }
             }
         }
@@ -58,78 +118,103 @@ fun BodySignalsCard(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LegendItem(label: String, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(8.dp).background(color, CircleShape))
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = label, style = MaterialTheme.typography.labelSmall)
-    }
-}
-
-@Composable
-fun DonutChart(modifier: Modifier, proportions: List<Float>, colors: List<Color>) {
-    Canvas(modifier = modifier) {
-        var startAngle = -90f
-        proportions.forEachIndexed { index, proportion ->
-            val sweepAngle = proportion * 360f
-            drawArc(
-                color = colors[index],
-                startAngle = startAngle,
-                sweepAngle = sweepAngle,
-                useCenter = false,
-                style = Stroke(width = 20.dp.toPx(), cap = StrokeCap.Round)
-            )
-            startAngle += sweepAngle
+fun DonutLabel(percent: String, label: String, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier.size(70.dp),
+        shape = CircleShape,
+        color = Color.White,
+        shadowElevation = 8.dp
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = percent, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(text = label, fontSize = 12.sp, color = TextPrimary)
         }
     }
 }
 
 @Composable
 fun LifestyleImpactCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = "Lifestyle Impact & Correlation",
-                style = MaterialTheme.typography.titleLarge
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Heatmap Grid
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                repeat(4) { rowIndex ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 24.dp)) {
+        Text(
+            text = "Lifestyle Impact",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
+        Card(
+            modifier = Modifier.fillMaxWidth().border(1.dp, Color(0xFF3CA7FF), RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Correlation Strength",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    Surface(
+                        color = Color(0xFFF9FAFB),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        repeat(12) { colIndex ->
-                            val alpha = (0.2f + (rowIndex * 0.15f) + (colIndex * 0.05f)).coerceIn(0.1f, 1f)
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                                    .background(Lavender.copy(alpha = alpha), RoundedCornerShape(4.dp))
-                            )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "4 months", fontSize = 12.sp, color = TextSecondary)
+                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(16.dp))
                         }
                     }
                 }
+
+                // Heatmap Rows
+                HeatmapRow("Sleep", LavenderDark, listOf(1f, 0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0f, 0f))
+                Spacer(modifier = Modifier.height(12.dp))
+                HeatmapRow("Hydrate", Pink, listOf(1f, 0.9f, 0.8f, 0f, 0f, 0f, 0f, 0f, 0f))
+                Spacer(modifier = Modifier.height(12.dp))
+                HeatmapRow("Caffeine", Teal, listOf(1f, 0.9f, 0.8f, 0.7f, 0.6f, 0f, 0f, 0f, 0f))
+                Spacer(modifier = Modifier.height(12.dp))
+                HeatmapRow("Exercise", Peach, listOf(1f, 0.9f, 0.8f, 0.7f, 0f, 0f, 0f, 0f, 0f))
             }
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Low Correlation", style = MaterialTheme.typography.labelSmall)
-                Text(text = "High Correlation", style = MaterialTheme.typography.labelSmall)
+        }
+    }
+}
+
+@Composable
+fun HeatmapRow(label: String, color: Color, opacities: List<Float>) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            modifier = Modifier.width(60.dp)
+        )
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            opacities.forEach { opacity ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(24.dp)
+                        .background(
+                            if (opacity > 0) color.copy(alpha = opacity) else Color(0xFFE5E7EB),
+                            RoundedCornerShape(4.dp)
+                        )
+                )
             }
         }
     }

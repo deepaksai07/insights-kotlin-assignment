@@ -1,16 +1,20 @@
 package com.example.insights.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,110 +23,113 @@ import com.example.insights.ui.theme.*
 
 @Composable
 fun CycleTrendsCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Cycle Trends",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { }, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = TextSecondary)
-                    }
-                    Text(
-                        text = "Jan - Jun",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    )
-                    IconButton(onClick = { }, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = TextSecondary)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
+    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 24.dp)) {
+        Text(
+            text = "Cycle Trends",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                    .padding(vertical = 32.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                // Left Arrow
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(24.dp)
+                        .border(1.dp, Lavender, CircleShape)
+                ) {
+                    Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = Lavender, modifier = Modifier.size(16.dp))
+                }
+
+                // Bars
                 val months = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun")
-                val heights = listOf(0.7f, 0.8f, 0.75f, 0.9f, 0.7f, 0.85f)
+                val values = listOf(28, 30, 28, 32, 28, 28)
+                val heights = listOf(140.dp, 160.dp, 140.dp, 170.dp, 140.dp, 140.dp)
                 
-                months.forEachIndexed { index, month ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        SegmentedBar(
-                            modifier = Modifier
-                                .width(32.dp)
-                                .fillMaxHeight(heights[index]),
-                            showIcons = index == 3 // Show icons on 'Apr' for demo
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = month, style = MaterialTheme.typography.labelSmall)
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier.weight(1f).padding(horizontal = 8.dp).height(200.dp)
+                ) {
+                    months.forEachIndexed { index, month ->
+                        val isSelected = index == 3 // Apr
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.alpha(if (isSelected) 1f else 0.8f)
+                        ) {
+                            Text(
+                                text = values[index].toString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = TextPrimary,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            Box(
+                                modifier = Modifier
+                                    .width(16.dp)
+                                    .height(heights[index])
+                                    .background(LavenderDark, RoundedCornerShape(8.dp))
+                            ) {
+                                // Teal segment
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(if (isSelected) 48.dp else 40.dp)
+                                        .align(Alignment.Center)
+                                        .offset(y = (-10).dp)
+                                        .background(Teal, RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(Icons.Default.Settings, contentDescription = null, tint = Color.White, modifier = Modifier.size(10.dp).alpha(0.5f))
+                                }
+                                
+                                // Pink segment
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(if (isSelected) 60.dp else 48.dp)
+                                        .align(Alignment.BottomCenter)
+                                        .background(Pink, RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.BottomCenter
+                                ) {
+                                    Icon(Icons.Default.WaterDrop, contentDescription = null, tint = Color.White, modifier = Modifier.size(10.dp).padding(bottom = 4.dp))
+                                }
+                            }
+                            
+                            Text(
+                                text = month,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isSelected) TextPrimary else TextSecondary,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                                modifier = Modifier.padding(top = 12.dp)
+                            )
+                        }
                     }
                 }
-            }
-        }
-    }
-}
 
-@Composable
-fun SegmentedBar(modifier: Modifier = Modifier, showIcons: Boolean = false) {
-    Column(
-        modifier = modifier
-            .background(Lavender.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
-            .padding(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        // Top segment (Lavender/Placeholder)
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .background(Lavender.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
-        )
-        // Mid segment (Teal)
-        Box(
-            modifier = Modifier
-                .weight(0.6f)
-                .fillMaxWidth()
-                .background(Teal, RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            if (showIcons) {
-                // Placeholder for icon (e.g. Gear)
-                Box(modifier = Modifier.size(12.dp).background(Color.White.copy(alpha = 0.3f), CircleShape))
-            }
-        }
-        // Bottom segment (Pink)
-        Box(
-            modifier = Modifier
-                .weight(1.2f)
-                .fillMaxWidth()
-                .background(Pink, RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            if (showIcons) {
-                // Placeholder for icon (e.g. Drop)
-                Box(modifier = Modifier.size(12.dp).background(Color.White.copy(alpha = 0.3f), CircleShape))
+                // Right Arrow
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(24.dp)
+                        .border(1.dp, Lavender, CircleShape)
+                ) {
+                    Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Lavender, modifier = Modifier.size(16.dp))
+                }
             }
         }
     }

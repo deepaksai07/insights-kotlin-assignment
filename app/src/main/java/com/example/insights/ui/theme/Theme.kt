@@ -9,13 +9,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Primary Colors
-val Lavender = Color(0xFFBDB2FF)
-val Teal = Color(0xFF70A1A1)
-val Pink = Color(0xFFFF8C8C)
-val AppBackground = Color(0xFFF5F7FA)
+val Lavender = Color(0xFFC6BEF7)
+val LavenderDark = Color(0xFFB0A6DE)
+val Teal = Color(0xFF83A294)
+val Pink = Color(0xFFF6A3A3)
+val DarkPink = Color(0xFFECA0A6)
+val Peach = Color(0xFFFADCDD)
+val AppBackground = Color(0xFFF8F9FA)
 val CardBackground = Color(0xFFFFFFFF)
-val TextPrimary = Color(0xFF1A1A1A)
-val TextSecondary = Color(0xFF6B7280)
+val TextPrimary = Color(0xFF1C1C1E)
+val TextSecondary = Color(0xFF8E8E93)
 
 val InsightsColorScheme = lightColorScheme(
     primary = Lavender,
